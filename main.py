@@ -1,11 +1,17 @@
-# This is a sample Python script.
+import json
+import sys
+import datetime
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+tasks = []
 
-
+def check_json():
+    pass
 def add_task():
-     pass
+     tasks.append({
+         "task": input("Enter task name: ")
+     })
+     with open("Tasks.json",'a') as file:
+         file.write(json.dumps(tasks))
 def update_task():
     pass
 def delete_task():
@@ -17,7 +23,7 @@ def list_tasks():
     #all, done, not-done, in-progress
     pass
 def task_tracker():
-    pass
+    add_task()
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     task_tracker()
