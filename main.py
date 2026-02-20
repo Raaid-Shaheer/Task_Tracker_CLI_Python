@@ -2,16 +2,29 @@ import json
 import sys
 import datetime
 
-tasks = []
+ # the add functions creates a list everytime the script runs so need to read the json file and read it to see if it's empty
 
-def check_json():
-    pass
 def add_task():
-     tasks.append({
-         "task": input("Enter task name: ")
-     })
-     with open("Tasks.json",'a') as file:
-         file.write(json.dumps(tasks))
+    try:
+        # First read the file to see if anything already exists
+        with open("Tasks.json", 'r') as file:
+            tasks = json.load(file)
+    except (FileNotFoundError,json.JSONDecodeError):
+        tasks = []
+        #add tasks taken from the user
+    while True:
+        task_name = input("Enter task name: (or type q to quit):  ")
+
+        if task_name == "q":
+            break
+        tasks.append({"task": task_name})
+
+            # save the updated tasks
+        with open("Tasks.json",'w') as file:
+             file.write(json.dumps(tasks))
+
+
+
 def update_task():
     pass
 def delete_task():
