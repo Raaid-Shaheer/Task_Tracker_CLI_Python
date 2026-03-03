@@ -68,7 +68,35 @@ def update_task():
         print("Error in updating task. Please try again.")
 
 def delete_task():
-    pass
+    try: # load the tasks into 'tasks'
+        with open("Tasks.json","r") as file:
+            tasks = json.load(file)
+    except (FileNotFoundError,json.JSONDecodeError):
+        print("No tasks available to delete.")
+        return
+     #display tasks
+    print("\nThe tasks found are: ")
+    for index, task in enumerate(tasks, start=1):
+        print(f"{index}. {task['task']}")
+
+    #  Ask user which task to delete
+    try:
+        index = int(input("Enter index of task to delete: ")) - 1
+        if index < 0 or index >= len(tasks):
+            print("Invalid index. Please try again.")
+            return
+    except ValueError:
+        print("Invalid index. Please try again.")
+        return
+    # Delete the item
+    deleted_task = tasks.pop(index)
+    try:
+        with open("Tasks.json","w") as file:
+            json.dump(tasks,file)
+            print(f"{deleted_task} deleted successfully!")
+    except Exception as e:
+        print(f"An error occurred during deleting{e}")
+
 def Mark_Progress(name):
     pass
     # in-progress, done
