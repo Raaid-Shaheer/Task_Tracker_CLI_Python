@@ -19,7 +19,7 @@ def add_task():
         if task_name.lower() == "q":
             break
         if task_name.isalpha():
-            tasks.append({"task": task_name})
+            tasks.append({"task": task_name, "progress": "to-do"})
 
             # save the updated tasks
     with open("Tasks.json",'w') as file:
@@ -98,8 +98,54 @@ def delete_task():
         print(f"An error occurred during deleting{e}")
 
 def Mark_Progress(name):
-    pass
-    # in-progress, done
+    try:
+        with open("Tasks.json","r") as file:
+            tasks = json.load(file)
+    except (FileNotFoundError,json.JSONDecodeError):
+        print("No tasks available.")
+        return
+
+    print("\nThe tasks found are: ")
+    for index, task in enumerate(tasks, start=1):
+        print(f"{index}.{task['task']} - [{task['progress']}]")
+
+    #ask user which task needs to be updated
+    try:
+        index = int(input("Enter index of task that needs to update progress: ")) -1
+        if index < 0 or index >= len(tasks):
+            print("Invalid index. Please try again.")
+            return
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+        return
+
+
+    # Change the progress
+
+    print("\nProgress Choices are: 1. To-D0\n2. In-Progress\n3. Done ")
+    progress_choice = int(input("Enter your choice: "))
+
+    match progress_choice:
+        case 1:
+            tasks[index]["progress"] = "To-Do"
+        case 2:
+            tasks[index]["progress"] = "In-Progress"
+        case 3:
+            tasks[index]["progress"] = "Done"
+        case _:
+            print("Invalid choice. Please try again.")
+            return
+
+    #Save updated tasks
+    try:
+        with open("Tasks.json","w") as file:
+            json.dump(tasks,file)
+            print(f"Progress updated to '{tasks[index]['progress']}' successfully!")
+    except IOError as e:
+        print(f"Error saving progress: {e}")
+
+
+
 def list_tasks():
     #all, done, not-done, in-progress
     pass
