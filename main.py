@@ -1,8 +1,5 @@
 import json
-import sys
-import datetime
-from asyncio import tasks
-from unittest import case
+
 
 
 def add_task():
@@ -18,12 +15,13 @@ def add_task():
 
         if task_name.lower() == "q":
             break
-        if task_name.isalpha():
+        if task_name:
             tasks.append({"task": task_name, "progress": "to-do"})
-
+            break
             # save the updated tasks
     with open("Tasks.json",'w') as file:
-        file.write(json.dumps(tasks))
+        json.dump(tasks, file)
+
 
 
 def update_task():
@@ -63,7 +61,7 @@ def update_task():
 # Step 6: Write the updated tasks back to the file
 
         with open("Tasks.json", 'w') as file:
-            json.dumps(tasks,file)
+            json.dump(tasks,file)
     except (IOError,json.JSONDecodeError):
         print("Error in updating task. Please try again.")
 
@@ -97,7 +95,7 @@ def delete_task():
     except Exception as e:
         print(f"An error occurred during deleting{e}")
 
-def Mark_Progress(name):
+def Mark_Progress():
     try:
         with open("Tasks.json","r") as file:
             tasks = json.load(file)
@@ -115,6 +113,7 @@ def Mark_Progress(name):
         if index < 0 or index >= len(tasks):
             print("Invalid index. Please try again.")
             return
+
     except ValueError:
         print("Invalid input. Please enter a number.")
         return
@@ -122,7 +121,7 @@ def Mark_Progress(name):
 
     # Change the progress
 
-    print("\nProgress Choices are: 1. To-D0\n2. In-Progress\n3. Done ")
+    print("\nProgress Choices are: \n1. To-D0\n2. In-Progress\n3. Done ")
     progress_choice = int(input("Enter your choice: "))
 
     match progress_choice:
@@ -147,28 +146,82 @@ def Mark_Progress(name):
 
 
 def list_tasks():
-    #all, done, not-done, in-progress
-    pass
+
+    with open("Tasks.json","r") as file:
+         tasks = json.load(file)
+
+    print("Choose which tasks you would like to display: ")
+    print("\n1. All Tasks\n2. To-Do\n3. In-Progress\n4. Done")
+
+    try:
+        choice = int(input("\nEnter your choice: "))
+        todo_tasks = [task for task in tasks if task["progress"] == "To-Do"]
+        In_Progress_tasks = [task for task in tasks if task["progress"] == "In-Progress"]
+        Done_tasks = [task for task in tasks if task["progress"] == "Done"]
+
+        match choice:
+            case 1:
+                if not tasks:
+                    print("No tasks available to display.")
+                else:
+                    for index, task in enumerate(tasks, start=1):
+                        print(f"{index}. {task['task']} - [{task['progress']}]")
+
+
+            case 2:
+                if not todo_tasks:
+                    print("No tasks available to display.")
+                else:
+                    for index,task in enumerate(todo_tasks, start=1):
+                        if task["progress"] == "To-Do":
+                            print(f"{index}.{task['task']} - [{task['progress']}]")
+
+            case 3:
+                if not In_Progress_tasks:
+                    print("No tasks available to display.")
+                else:
+                    for index,task in enumerate(In_Progress_tasks, start=1):
+                        if task["progress"] == "In-Progress":
+                            print(f"{index}.{task['task']} - [{task['progress']}]")
+
+            case 4:
+                if not Done_tasks:
+                    print("No tasks available to display.")
+                else:
+                    for index,task in enumerate(Done_tasks, start=1):
+                        if task["progress"] == "Done":
+                            print(f"{index}.{task['task']} - [{task['progress']}]")
+
+            case _:
+                print("Invalid choice. Please try again.")
+    except ValueError:
+        print("Please enter a valid number.")
+
 def task_tracker():
 
     print("-----Task Tracker-----")
-    print("What would you like to do?")
-    print("1. Add task","2. Update task","3. Delete task","4. Mark progress","5. List tasks","6. Exit\n", sep='\n')
-
-
     while True:
+        print("\nWhat would you like to do?")
+        print("1. Add task", "2. Update task", "3. Delete task", "4. Mark progress", "5. List tasks", "6. Exit\n",
+              sep='\n')
+
         choice = int(input("Enter your choice: "))
         match(choice):
             case 1:
+                 print("********************* Add task********************")
                  add_task()
             case 2:
-                 update_task()
+                print("********************* Update task********************")
+                update_task()
             case 3:
-                 delete_task()
+                print("********************* Delete task********************")
+                delete_task()
             case 4:
-                 Mark_Progress()
+                print("********************* Mark progress ********************")
+                Mark_Progress()
             case 5:
-                 list_tasks()
+                print("********************* List tasks ********************")
+                list_tasks()
             case 6:
                 print("See you later!")
                 break
